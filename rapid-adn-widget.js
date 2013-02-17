@@ -4,14 +4,15 @@ RapidADN.script = function(RapidADN, window, document) {
 	var apis = RapidADN.apis,
 		i;
 	
-	function callback(api, posts) {
-		if ( typeof posts.error != 'undefined' ) {
+	function callback(api, response) {
+		if ( typeof response.meta.error_message != 'undefined' ) {
 			return;
 		}
 		
 		var widgets = api.widgets,
 			widgets_len = widgets.length,
-			the_html = '';
+			the_html = '',
+			posts = response.data;
 
 		the_html = generate_html(api.screen_name, posts);
 			
@@ -39,39 +40,39 @@ RapidADN.script = function(RapidADN, window, document) {
 				rt_html = '',
 				classes = ['adnpost'];
 
-			if (typeof use_post.user.screen_name == 'undefined') {
-				use_post.user.screen_name = screen_name;
+			if (typeof use_post.user.username == 'undefined') {
+				use_post.user.username = screen_name;
 			}
 
-			if (typeof use_post.reposted_status != 'undefined') {
-				use_post = use_post.reposted_status;
+			if (typeof use_post.repost_of != 'undefined') {
+				use_post = use_post.repost_of;
 				classes.push('adnpost--repost');
 
-				if (typeof use_post.user.screen_name == 'undefined') {
-					var mentions = posts[i].entities.user_mentions,
+				if (typeof use_post.user.username == 'undefined') {
+					var mentions = posts[i].entities.mentions,
 						mentions_length = mentions.length,
-						mention_position = 256; //any number over 140 works
+						mention_position = 500; //any number over 256 works
 					for (var j=0; j<mentions_length; j++) {
-						if (mentions[j].indices[0] < mention_position) {
-							mention_position = mentions[j].indices[0];
-							use_post.user.screen_name = mentions[j].screen_name;
+						if (mentions[j].pos < mention_position) {
+							mention_position = mentions[j].pos;
+							use_post.user.username = mentions[j].name;
 						}
 					}
 				}
 
 				
-				rt_html += 'RT ';
+				rt_html += '>> ';
 				rt_html += '<a href="';
 				rt_html += 'https://alpha.app.net/';
-				rt_html += use_post.user.screen_name;
+				rt_html += use_post.user.username;
 				rt_html += '" class="adnpost__mention adnpost__mention--repost">';
 				rt_html += '<span>@</span>';
-				rt_html += use_post.user.screen_name;
+				rt_html += use_post.user.username;
 				rt_html += '</a>';
 				rt_html += ': ';
 			}
 			
-			if (use_post.in_reply_to_screen_name != null) {
+			if (use_post.reply_to != null) {
 				classes.push('adnpost--reply');
 			}
 
@@ -80,14 +81,12 @@ RapidADN.script = function(RapidADN, window, document) {
 			the_html += '">';
 			the_html += rt_html;
 			the_html += process_entities(use_post);
+			// the_html += use_post.text;
 			
 			
 			the_html += ' ';
 			the_html += '<a class="adnpost__datestamp" href="';
-			the_html += 'https://alpha.app.net/';
-			the_html += use_post.user.screen_name;
-			the_html += '/post/';
-			the_html += use_post.id_str;
+			the_html += use_post.canonical_url;
 			the_html += '">';
 			the_html += relative_time(use_post.created_at);
 			the_html += '</a>';
@@ -98,13 +97,16 @@ RapidADN.script = function(RapidADN, window, document) {
 
 
 	function relative_time(time_value) {
-		var split_date = time_value.split(" "),
-			the_date = new Date(split_date[1] + " " + split_date[2] + ", " + split_date[5] + " " + split_date[3] + " UTC"),
+		var split_timevalue = time_value.split("T"),
+			split_date = split_timevalue[0].split("-"),
+			split_time = split_timevalue[1].replace('Z', '').split(":"),
+			the_date = new Date(split_date[0], split_date[1]-1,split_date[2],split_time[0],split_time[1],split_time[2]),
 			now = new Date(),
-			delta = (now.getTime() - the_date.getTime()) / 1000,
+			offset = now.getTimezoneOffset() * 60 * 1000,
+			delta = (now.getTime() + offset - the_date.getTime()) / 1000,
 			monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun",
 				"Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-		
+
 		if(delta < 60) {
 			return 'less than a minute ago';
 		}
@@ -144,22 +146,24 @@ RapidADN.script = function(RapidADN, window, document) {
 		for (key in post.entities) {
 			for (i = 0, len = post.entities[key].length; i < len; i++) {
 				elem = post.entities[key][i];
-				entities[elem.indices[0]] = {
-					end: elem.indices[1],
+				entities[elem.pos] = {
+					end: elem.pos + elem.len,
 					text: function () {
 						switch (key) {
+							/*
 							case 'media':
 								return '<a href="' + elem.url + '" class="adnpost__media" title="' + elem.expanded_url + '">' + elem.display_url + '</a>';
 								break;
-							case 'urls':
-								return (elem.display_url)? '<a href="' + elem.url + '" class="adnpost__link" title="' + elem.expanded_url + '">' + elem.display_url + '</a>': elem.url;
+							*/
+							case 'links':
+								return (elem.text)? '<a href="' + elem.url + '" class="adnpost__link">' + elem.text + '</a>': elem.text;
 								break;
-							case 'user_mentions':
-								var reply_class = (elem.indices[0] == 0) ? ' adnpost__mention--reply' : '';
-								return '<a href="https://alpha.app.net/' + elem.screen_name + '" class="adnpost__mention'+reply_class+'"><span>@</span>' + elem.screen_name + '</a>';
+							case 'mentions':
+								var reply_class = (elem.pos == 0) ? ' adnpost__mention--reply' : '';
+								return '<a href="https://alpha.app.net/' + elem.name + '" class="adnpost__mention'+reply_class+'"><span>@</span>' + elem.name + '</a>';
 								break;
 							case 'hashtags':
-								return '<a href="alpha.app.net/hashtags/' + elem.text + '" class="adnpost__hashtag"><span>#</span>' + elem.text + '</a>';
+								return '<a href="https://alpha.app.net/hashtags/' + elem.name + '" class="adnpost__hashtag"><span>#</span>' + elem.name + '</a>';
 								break;
 							default:
 								return '';
@@ -193,29 +197,35 @@ RapidADN.script = function(RapidADN, window, document) {
 	for (var key in apis) {
 		var api = apis[key],
 			tw = document.createElement('script'),
-			s, script_source;
+			s, script_source = '';
 
-		script_source += 'alpha-api.app.net/stream/0/users/@';
+		script_source += 'https://alpha-api.app.net/stream/0/users/@';
 		script_source += api.screen_name;
 		script_source += '/posts?';
 
 		script_source += 'count=';
 		script_source += api.count;
 		script_source += '&';
-		script_source += 'exclude_replies=';
-		script_source += api.exclude_replies;
+		
+		script_source += 'include_directed_posts=';
+		script_source += ( api.exclude_replies == 't' ) ? '0' : '1';
+
 		script_source += '&';
 		script_source += 'include_rts=';
 		script_source += api.include_rts;
+
 		script_source += '&';
 		script_source += 'include_entities=';
 		script_source += 't';
+
 		script_source += '&';
 		script_source += 'trim_user=';
 		script_source += 't';
+
 		script_source += '&';
 		script_source += 'suppress_response_codes=';
 		script_source += 't';
+
 		script_source += '&';
 		script_source += 'callback=RapidADN.callback.' + key + '';
 
