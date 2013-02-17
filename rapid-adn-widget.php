@@ -1,47 +1,47 @@
 <?php
 /*
-Plugin Name: Rapid Twitter Widget
+Plugin Name: Rapid App.net Widget
 Plugin URI: 
-Description: Display the <a href="http://twitter.com/">Twitter</a> latest updates from a Twitter user inside a widget. 
-Version: 1.0
+Description: Display the <a href="http://app.net/">App.net</a> latest updates from a App.net user inside a widget. 
+Version: 0.1
 Author: Peter Wilson, Floate Design Partners
 Author URI: 
 License: GPLv2
 */
 
-define('RAPID_TWITTER_WIDGET_VERSION', '1.0');
+define('RAPID_ADN_WIDGET_VERSION', '0.1');
 
-class Rapid_Twitter_Widget extends WP_Widget {
+class Rapid_ADN_Widget extends WP_Widget {
 
-	function Rapid_Twitter_Widget() {
+	function Rapid_ADN_Widget() {
 		$widget_ops = array(
-			'classname'   => 'widget_twitter widget_twitter--hidden',
-			'description' => __( 'Display your tweets from Twitter')
+			'classname'   => 'widget_adn widget_adn--hidden',
+			'description' => __( 'Display your posts from App.net')
 		);
-		parent::WP_Widget( 'rapid-twitter', __( 'Rapid Twitter' ), $widget_ops );
+		parent::WP_Widget( 'rapid-adn', __( 'Rapid App.net' ), $widget_ops );
 		
 		if ( is_active_widget(false, false, $this->id_base) ) {
-			add_action( 'wp_head', array(&$this, 'rapid_twitter_widget_style') );
+			add_action( 'wp_head', array(&$this, 'rapid_adn_widget_style') );
 		}
 		
-		add_action( 'wp_enqueue_scripts', array( &$this, 'rapid_twitter_widget_script' ) );
+		add_action( 'wp_enqueue_scripts', array( &$this, 'rapid_adn_widget_script' ) );
 	}
 	
-	function rapid_twitter_widget_style() {
+	function rapid_adn_widget_style() {
 		if ( ! current_theme_supports( 'widgets' ) 
-			|| ! apply_filters( 'show_rapid_twitter_widget_style', true, $this->id_base ) ) {
+			|| ! apply_filters( 'show_rapid_adn_widget_style', true, $this->id_base ) ) {
 			return;
 		}
-		echo "<style>.widget_twitter--hidden{display:none!important;}</style>";
+		echo "<style>.widget_adn--hidden{display:none!important;}</style>";
 	}
 
-	function rapid_twitter_widget_script() {
+	function rapid_adn_widget_script() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '-min';
 		wp_register_script(
-			'rapid-twitter-widget',
-			WP_PLUGIN_URL . "/rapid-twitter-widget/rapid-twitter-widget$suffix.js",
+			'rapid-adn-widget',
+			WP_PLUGIN_URL . "/rapid-adn-widget/rapid-adn-widget$suffix.js",
 			'',
-			RAPID_TWITTER_WIDGET_VERSION,
+			RAPID_ADN_WIDGET_VERSION,
 			true
 		);
 
@@ -51,15 +51,15 @@ class Rapid_Twitter_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		$instance['account'] = trim( strip_tags( stripslashes( $new_instance['account'] ) ) );
-		$instance['account'] = str_replace( 'http://twitter.com/', '', $instance['account'] );
-		$instance['account'] = str_replace( 'https://twitter.com/', '', $instance['account'] );
+		$instance['account'] = str_replace( 'http://alpha.app.net/', '', $instance['account'] );
+		$instance['account'] = str_replace( 'https://alpha.app.net/', '', $instance['account'] );
 		$instance['account'] = str_replace( '/', '', $instance['account'] );
 		$instance['account'] = str_replace( '@', '', $instance['account'] );
 		$instance['account'] = str_replace( '#!', '', $instance['account'] ); // account for the Ajax URI
 		$instance['title'] = strip_tags( stripslashes( $new_instance['title'] ) );
 		$instance['show'] = absint( $new_instance['show'] );
 		$instance['hidereplies'] = isset( $new_instance['hidereplies'] );
-		$instance['includeretweets'] = isset( $new_instance['includeretweets'] );
+		$instance['includereposts'] = isset( $new_instance['includereposts'] );
 
 		return $instance;
 	}
@@ -80,7 +80,7 @@ class Rapid_Twitter_Widget extends WP_Widget {
 		if ( $show < 1 || 20 < $show )
 			$show = 5;
 		$hidereplies = (bool) $instance['hidereplies'];
-		$include_retweets = (bool) $instance['includeretweets'];
+		$include_reposts = (bool) $instance['includereposts'];
 
 		//Title
 		echo '<p>';
@@ -90,13 +90,13 @@ class Rapid_Twitter_Widget extends WP_Widget {
 
 		//Username
 		echo '<p>';
-		echo '<label for="' . $this->get_field_id('account') . '">' . esc_html__('Twitter username:') . '</label>';
+		echo '<label for="' . $this->get_field_id('account') . '">' . esc_html__('App.net username:') . '</label>';
 		echo '<input class="widefat" id="' . $this->get_field_id('account') . '" name="' . $this->get_field_name('account') . '" type="text" value="' . $account . '" />';
 		echo '</p>';
 
-		//Max Tweets
+		//Max Posts
 		echo '<p>';
-		echo '<label for="' . $this->get_field_id('show') . '">' . esc_html__('Maximum number of tweets to show:') . '</label>';
+		echo '<label for="' . $this->get_field_id('show') . '">' . esc_html__('Maximum number of posts to show:') . '</label>';
 		echo '<select id="' . $this->get_field_id('show') . '" name="' . $this->get_field_name('show') . '">';
 
 		for ( $i = 1; $i <= 20; ++$i )
@@ -115,12 +115,12 @@ class Rapid_Twitter_Widget extends WP_Widget {
 		echo '</label>';
 		echo '</p>';
 
-		//Include Retweets
+		//Include Reposts
 		echo '<p>';
-		echo '<label for="' . $this->get_field_id('includeretweets') . '"><input id="' . $this->get_field_id('includeretweets') . '" class="checkbox" type="checkbox" name="' . $this->get_field_name('includeretweets') . '"';
-		if ( $include_retweets )
+		echo '<label for="' . $this->get_field_id('includereposts') . '"><input id="' . $this->get_field_id('includereposts') . '" class="checkbox" type="checkbox" name="' . $this->get_field_name('includereposts') . '"';
+		if ( $include_reposts )
 			echo ' checked="checked"';
-		echo ' /> ' . esc_html__('Include retweets');
+		echo ' /> ' . esc_html__('Include reposts');
 		echo '</label>';
 		echo '</p>';
 	}
@@ -131,19 +131,19 @@ class Rapid_Twitter_Widget extends WP_Widget {
 		$account = trim( urlencode( $instance['account'] ) );
 		if ( empty( $account ) ) return;
 		$title = apply_filters( 'widget_title', $instance['title'] );
-		if ( empty( $title ) ) $title = __( 'Twitter Updates' );
+		if ( empty( $title ) ) $title = __( 'App.net Updates' );
 		$show = absint( $instance['show'] );  // # of Updates to show
 		if ( $show > 200 ) {
-			// Twitter paginates at 200 max tweets. update() should not have accepted greater than 20
+			// App.net paginates at 200 max posts. update() should not have accepted greater than 20
 			$show = 200;
 		}
 		$hidereplies = (bool) $instance['hidereplies'] ? 't' : 'f';
-		$include_retweets = (bool) $instance['includeretweets'] ? 't' : 'f';
+		$include_reposts = (bool) $instance['includereposts'] ? 't' : 'f';
 
 		echo $before_widget;
 
 		echo $before_title;
-		echo "<a href='" . esc_url( "https://twitter.com/{$account}" ) . "'>" . esc_html($title) . "</a>";
+		echo "<a href='" . esc_url( "https://alpha.app.net/{$account}" ) . "'>" . esc_html($title) . "</a>";
 		echo $after_title;
 		
 		$numbers = array( '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' );
@@ -152,7 +152,7 @@ class Rapid_Twitter_Widget extends WP_Widget {
 		$url_ref = '';
 		$url_ref .= $show . '__';
 		$url_ref .= $hidereplies . '__';
-		$url_ref .= $include_retweets . '__';
+		$url_ref .= $include_reposts . '__';
 		$url_ref .= $account . '';
 		
 		$url_ref = hash( 'md5', $url_ref );
@@ -171,29 +171,29 @@ class Rapid_Twitter_Widget extends WP_Widget {
 		$script_id = base_convert( $script_id, 16, 36 );
 
 		echo '<script id="' . $script_id . '">';
-		echo 'if(typeof(RapidTwitter)==\'undefined\'){';
-		echo 'RapidTwitter={};RapidTwitter.apis={};';
+		echo 'if(typeof(RapidADN)==\'undefined\'){';
+		echo 'RapidADN={};RapidADN.apis={};';
 		echo '}';
-		echo 'if(typeof(RapidTwitter.apis.' . $url_ref . ')==\'undefined\'){';
-		echo 'RapidTwitter.apis.' . $url_ref . '={';
+		echo 'if(typeof(RapidADN.apis.' . $url_ref . ')==\'undefined\'){';
+		echo 'RapidADN.apis.' . $url_ref . '={';
 		echo 'screen_name:\'' . esc_js( $account ) . '\'';
 		echo ',count:\'' . esc_js( $show ) . '\'';
 		echo ',exclude_replies:\'' . esc_js( $hidereplies ) . '\'';
-		echo ',include_rts:\'' . esc_js( $include_retweets ) . '\'';
+		echo ',include_rts:\'' . esc_js( $include_reposts ) . '\'';
 		echo ',widgets: []';
 		echo '};';
 		echo '}';
-		echo 'RapidTwitter.apis.' . $url_ref . '.widgets.push(\'' . $script_id . '\');';
+		echo 'RapidADN.apis.' . $url_ref . '.widgets.push(\'' . $script_id . '\');';
 		echo '</script>';
-		wp_enqueue_script( 'rapid-twitter-widget' );
+		wp_enqueue_script( 'rapid-adn-widget' );
 		echo $after_widget;
 		
 	}
 
 }
 
-add_action( 'widgets_init', 'rapid_twitter_widget_init' );
+add_action( 'widgets_init', 'rapid_adn_widget_init' );
 
-function rapid_twitter_widget_init() {
-	register_widget( 'Rapid_Twitter_Widget' );
+function rapid_adn_widget_init() {
+	register_widget( 'Rapid_ADN_Widget' );
 }
