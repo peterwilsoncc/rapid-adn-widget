@@ -225,10 +225,6 @@ RapidADN.script = function(RapidADN, window, document) {
 		script_source += '0';
 
 		script_source += '&';
-		script_source += 'suppress_response_codes=';
-		script_source += 't';
-
-		script_source += '&';
 		script_source += 'callback=RapidADN.callback.' + key + '';
 
 
