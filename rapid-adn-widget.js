@@ -12,25 +12,28 @@ RapidADN.script = function(RapidADN, window, document) {
 		var widgets = api.widgets,
 			widgets_len = widgets.length,
 			the_html = '',
+			include_reposts = ( api.include_rts == 'f' ) ? false : true,
 			posts = response.data;
 
-		the_html = generate_html(api.screen_name, posts);
+		the_html = generate_html(api.screen_name, posts, include_reposts);
+		
+		if ( the_html != '' ) {
+			for (var i=0; i<widgets_len; i++) {
+				var element = widgets[i],
+					ul = document.createElement('ul');
+				element = document.getElementById(element).parentNode;
 			
-		for (var i=0; i<widgets_len; i++) {
-			var element = widgets[i],
-				ul = document.createElement('ul');
-			element = document.getElementById(element).parentNode;
-			
-			ul.className = 'adnposts';
-			ul.innerHTML = the_html;
-			element.appendChild(ul);
+				ul.className = 'adnposts';
+				ul.innerHTML = the_html;
+				element.appendChild(ul);
 
-			removeClass(element, 'widget_adn--hidden');
+				removeClass(element, 'widget_adn--hidden');
+			}
 		}
 	}
 	RapidADN.callback = callback;
 
-	function generate_html(screen_name, posts){
+	function generate_html(screen_name, posts, include_reposts){
 		var the_html = '';
 		if ( typeof RapidADN.generate_html == 'function' ) {
 			return RapidADN.generate_html(screen_name, posts);
@@ -45,6 +48,9 @@ RapidADN.script = function(RapidADN, window, document) {
 			}
 
 			if (typeof use_post.repost_of != 'undefined') {
+				if ( include_reposts == false ) {
+					continue;
+				}
 				use_post = use_post.repost_of;
 				classes.push('adnpost--repost');
 
