@@ -56,6 +56,12 @@ with the function `RapidADN.relative_time(time)`.
 
 Yes.
 
+= I see less than the requested number of posts displayed =
+ 
+The Rapid App.net widget may return less than the requested number of 
+posts if the requested account has a high number of reposts in its timeline.
+
+
 = What's with the strange class names like .adn__mention and .adn__mention--reply? = 
 
 The widget uses the BEM naming convention for class names, which has been 
