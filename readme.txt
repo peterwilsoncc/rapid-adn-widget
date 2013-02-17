@@ -71,6 +71,6 @@ They're a little strange at first but I find them surprisingly useful.
 
 == Changelog ==
 
-= 0.1 =
+= 0.9 =
 
 * Initial version duplicating Rapid Twitter Widget.
