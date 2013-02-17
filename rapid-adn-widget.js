@@ -41,6 +41,7 @@ RapidADN.script = function(RapidADN, window, document) {
 		for (var i=0, l=posts.length; i<l; i++) {
 			var use_post = posts[i], 
 				rt_html = '',
+				post_html = '',
 				classes = ['adnpost'];
 
 			if (typeof use_post.user.username == 'undefined') {
@@ -82,11 +83,14 @@ RapidADN.script = function(RapidADN, window, document) {
 				classes.push('adnpost--reply');
 			}
 
+			post_html = process_entities(use_post);
+			post_html = post_html.replace(/\n/g, '<br>');
+
 			the_html += '<li class="';
 			the_html += classes.join(' ');
 			the_html += '">';
 			the_html += rt_html;
-			the_html += process_entities(use_post);
+			the_html += post_html;
 			// the_html += use_post.text;
 			
 			
