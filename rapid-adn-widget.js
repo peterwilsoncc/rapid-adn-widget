@@ -219,15 +219,7 @@ RapidADN.script = function(RapidADN, window, document) {
 		
 		script_source += 'include_directed_posts=';
 		script_source += ( api.exclude_replies == 't' ) ? '0' : '1';
-
-		script_source += '&';
-		script_source += 'include_rts=';
-		script_source += api.include_rts;
-
-		script_source += '&';
-		script_source += 'include_entities=';
-		script_source += 't';
-
+		
 		script_source += '&';
 		script_source += 'include_deleted=';
 		script_source += '0';
