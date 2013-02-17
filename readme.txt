@@ -1,7 +1,7 @@
 === Rapid App.Net Widget ===
 Contributors: peterwilsoncc, floatedesign
 Tags: adn, app.net, widget
-Stable tag: 0.1
+Stable tag: 0.9
 Requires at least: 3.4.2
 Tested up to: 3.5.1
 License: GPLv2

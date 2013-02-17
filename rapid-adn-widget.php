@@ -2,14 +2,14 @@
 /*
 Plugin Name: Rapid App.net Widget
 Plugin URI: 
-Description: Display the <a href="http://app.net/">App.net</a> latest updates from a App.net user inside a widget. 
-Version: 0.1
+Description: Display the latest updates from a App.net user inside a widget. 
+Version: 0.9
 Author: Peter Wilson, Floate Design Partners
 Author URI: 
 License: GPLv2
 */
 
-define('RAPID_ADN_WIDGET_VERSION', '0.1');
+define('RAPID_ADN_WIDGET_VERSION', '0.9');
 
 class Rapid_ADN_Widget extends WP_Widget {
 
