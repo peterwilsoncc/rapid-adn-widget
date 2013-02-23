@@ -39,7 +39,7 @@ class Rapid_ADN_Widget extends WP_Widget {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '-min';
 		wp_register_script(
 			'rapid-adn-widget',
-			WP_PLUGIN_URL . "/rapid-adn-widget/rapid-adn-widget$suffix.js",
+			plugins_url( 'rapid-adn-widget/rapid-adn-widget' . $suffix . '.js' ),
 			'',
 			RAPID_ADN_WIDGET_VERSION,
 			true
