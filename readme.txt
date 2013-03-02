@@ -19,7 +19,7 @@ you complete control over the look.
 Posts and your content are loaded separately to ensure a delayed response
 from App.net doesn't slow down your website.
 
-Based upon Rapid Twitter Widget.
+Based upon [Rapid Twitter Widget](http://wordpress.org/extend/plugins/rapid-twitter-widget/).
 
 
 == Development on GitHub ==
