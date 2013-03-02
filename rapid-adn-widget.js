@@ -204,38 +204,41 @@ RapidADN.script = function(RapidADN, window, document) {
 	}
 
 
-	for (var key in apis) {
-		var api = apis[key],
-			tw = document.createElement('script'),
-			s, script_source = '';
+	for (var outer_key in apis) {
+		(function(){
+			var key = outer_key,
+				api = apis[key],
+				tw = document.createElement('script'),
+				s, script_source = '';
 
-		script_source += 'https://alpha-api.app.net/stream/0/users/@';
-		script_source += api.screen_name;
-		script_source += '/posts?';
+			script_source += 'https://alpha-api.app.net/stream/0/users/@';
+			script_source += api.screen_name;
+			script_source += '/posts?';
 
-		script_source += 'count=';
-		script_source += api.count;
-		script_source += '&';
+			script_source += 'count=';
+			script_source += api.count;
+			script_source += '&';
 		
-		script_source += 'include_directed_posts=';
-		script_source += ( api.exclude_replies == 't' ) ? '0' : '1';
+			script_source += 'include_directed_posts=';
+			script_source += ( api.exclude_replies == 't' ) ? '0' : '1';
 		
-		script_source += '&';
-		script_source += 'include_deleted=';
-		script_source += '0';
+			script_source += '&';
+			script_source += 'include_deleted=';
+			script_source += '0';
 
-		script_source += '&';
-		script_source += 'callback=RapidADN.callback.' + key + '';
+			script_source += '&';
+			script_source += 'callback=RapidADN.callback.' + key + '';
 
 
-		RapidADN.callback[key] = function(posts) {callback(api,posts);};
+			RapidADN.callback[key] = function(posts) {callback(api,posts);};
 
-		tw.type = 'text/javascript';
-		tw.async = true;
-		tw.src = script_source;
-		s = document.getElementsByTagName('script')[0]; 
-		s.parentNode.insertBefore(tw, s);
+			tw.type = 'text/javascript';
+			tw.async = true;
+			tw.src = script_source;
+			s = document.getElementsByTagName('script')[0]; 
+			s.parentNode.insertBefore(tw, s);
 
+		})();
 
 	}
 	
