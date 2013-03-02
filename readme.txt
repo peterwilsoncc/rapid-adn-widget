@@ -1,7 +1,7 @@
 === Rapid App.Net Widget ===
 Contributors: peterwilsoncc, floatedesign
 Tags: adn, app.net, widget
-Stable tag: 0.9
+Stable tag: 1.1
 Requires at least: 3.4.2
 Tested up to: 3.5.1
 License: GPLv2
@@ -70,6 +70,14 @@ nicely [summarised by Nicolas Gallagher](https://gist.github.com/1309546).
 They're a little strange at first but I find them surprisingly useful. 
 
 == Changelog ==
+
+= 1.1 =
+
+* Fixes bug preventing multiple widgets appearing on a single page.
+
+= 1.0 =
+
+* Version number skipped.
 
 = 0.9 =
 
