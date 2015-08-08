@@ -3,22 +3,22 @@
 Plugin Name: Rapid App.net Widget
 Plugin URI: 
 Description: Display the latest updates from a App.net user inside a widget. 
-Version: 1.1
-Author: Peter Wilson, Floate Design Partners
+Version: 1.2
+Author: Peter Wilson
 Author URI: 
 License: GPLv2
 */
 
-define('RAPID_ADN_WIDGET_VERSION', '1.1');
+define('RAPID_ADN_WIDGET_VERSION', '1.2');
 
 class Rapid_ADN_Widget extends WP_Widget {
 
-	function Rapid_ADN_Widget() {
+	function __construct() {
 		$widget_ops = array(
 			'classname'   => 'widget_adn widget_adn--hidden',
 			'description' => __( 'Display your posts from App.net')
 		);
-		parent::WP_Widget( 'rapid-adn', __( 'Rapid App.net' ), $widget_ops );
+		parent::__construct( 'rapid-adn', __( 'Rapid App.net' ), $widget_ops );
 		
 		if ( is_active_widget(false, false, $this->id_base) ) {
 			add_action( 'wp_head', array(&$this, 'rapid_adn_widget_style') );
