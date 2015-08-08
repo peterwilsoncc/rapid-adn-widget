@@ -1,9 +1,9 @@
 === Rapid App.Net Widget ===
 Contributors: peterwilsoncc
 Tags: adn, app.net, widget
-Stable tag: 1.1
+Stable tag: 1.2
 Requires at least: 3.4.2
-Tested up to: 3.5.1
+Tested up to: 4.3
 License: GPLv2
 
 Display posts from one or more App.net accounts using a WordPress widget.
@@ -70,6 +70,10 @@ nicely [summarised by Nicolas Gallagher](https://gist.github.com/1309546).
 They're a little strange at first but I find them surprisingly useful. 
 
 == Changelog ==
+
+= 1.2 =
+
+* Compatibility with WordPress 4.3
 
 = 1.1 =
 
